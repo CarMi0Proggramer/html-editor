@@ -1,6 +1,153 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import { getDocuments } from "../utils/documents";
+
+const documents = await getDocuments();
 ---
 
 <Layout>
+  <main class="max-w-screen-xl px-4 mx-auto lg:px-12">
+    <section class="mt-4 flex flex-col items-center">
+      <!-- Start coding here -->
+      <div
+        class="relative bg-white shadow-md sm:rounded-md border border-gray-200 w-full"
+      >
+        <div
+          class="flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4"
+        >
+          <div class="w-full md:w-1/2">
+            <form class="flex items-center">
+              <label for="simple-search" class="sr-only">Search</label>
+              <div class="relative w-full">
+                <div
+                  class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="w-5 h-5 text-gray-500"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  id="simple-search"
+                  class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-md bg-gray-50 focus:ring-primary-500 focus:border-primary-500"
+                  placeholder="Search"
+                  required=""
+                />
+              </div>
+            </form>
+          </div>
+          <div
+            class="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3"
+          >
+            <button
+              id="createNewDocument"
+              type="button"
+              class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-md bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 focus:outline-none"
+            >
+              <svg
+                class="h-3.5 w-3.5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  clip-rule="evenodd"
+                  fill-rule="evenodd"
+                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                ></path>
+              </svg>
+              Crear Nuevo Documento
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Drafts -->
+    <section class="mt-6">
+      <h1 class="text-2xl sm:text-3xl font-bold text-gray-950">
+        Documentos Creados
+      </h1>
+
+      {
+        documents.length > 0 ? (
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {documents.map((document) => (
+              <a
+                href={`/editor/${document.id}`}
+                data-document-id={document.id}
+                class="document rounded-md bg-white shadow border border-gray-200 transition-transform hover:scale-105 overflow-hidden"
+              >
+                <div class="p-6 bg-red-200 flex gap-2 items-center justify-center">
+                  <svg
+                    class="size-14 text-red-600"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 384 512"
+                  >
+                    <path d="M0 32l34.9 395.8L191.5 480l157.6-52.2L384 32H0zm308.2 127.9H124.4l4.1 49.4h175.6l-13.6 148.4-97.9 27v.3h-1.1l-98.7-27.3-6-75.8h47.7L138 320l53.5 14.5 53.7-14.5 6-62.2H84.3L71.5 112.2h241.1l-4.4 47.7z" />
+                  </svg>
+                  <p class="text-gray-950 text-2xl font-extrabold">HTML5</p>
+                </div>
+                <div class="p-4">
+                  <p class="text-gray-500 truncate">{document.name}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div class="flex justify-center">
+            <div class="w-96 flex flex-col items-center -gap-2">
+              <img
+                class="object-contain object-center size-full"
+                src="/no-documents.png"
+                alt="No Hay Documentos"
+              />
+              <p class="-mt-8 text-base sm:text-lg text-gray-500 text-center">
+                No hay documentos creados todavía...
+              </p>
+            </div>
+          </div>
+        )
+      }
+    </section>
+  </main>
 </Layout>
+<script>
+  async function createDocument() {
+    const res = await fetch("/api/documents", {
+      method: "POST",
+    });
+
+    const data = await res.json();
+
+    localStorage.setItem("documentId", data.id);
+    location.href = `/editor/${data.id}`;
+  }
+
+  window.onload = () => {
+    const createButton = document.getElementById("createNewDocument");
+
+    if (createButton instanceof HTMLButtonElement) {
+      createButton.addEventListener("click", createDocument);
+    }
+
+    const documents = document.getElementsByClassName(
+      "document"
+    ) as HTMLCollectionOf<HTMLElement>;
+    for (const document of documents) {
+      document.addEventListener("click", () => {
+        localStorage.setItem("documentId", document.dataset["documentId"]!);
+      });
+    }
+  };
+</script>

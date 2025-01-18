@@ -1,0 +1,96 @@
+---
+import AddSectionModal from "../../components/AddSectionModal.astro";
+import ToastSuccess from "../../components/ToastSuccess.astro";
+import Layout from "../../layouts/Layout.astro";
+import { getDocumentSectionsByDocumentId } from "../../utils/document-sections";
+import { getDocumentById } from "../../utils/documents";
+
+const documentId = Astro.params["id"]!;
+
+const document = await getDocumentById(documentId);
+const documentSections = await getDocumentSectionsByDocumentId(documentId);
+---
+
+<Layout title="HTML Editor">
+  <main class="max-w-screen-lg mx-auto p-6">
+    <section class="flex justify-between items-center flex-wrap gap-4">
+      <form
+        id="updateDocumentNameForm"
+        class="flex items-center w-full sm:w-1/2"
+      >
+        <div class="relative w-full">
+          <input
+            type="text"
+            id="document-name"
+            class="block w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md bg-gray-50 focus:ring-primary-500 focus:border-primary-500"
+            placeholder="Nombre del documento"
+            required
+            name="name"
+            value={document.name}
+          />
+          <button
+            type="submit"
+            class="inline-flex items-center gap-1 bg-primary-600 rounded-md px-4 py-2 text-white absolute right-0 inset-y-0 font-semibold focus:ring-4 focus:ring-primary-200 hover:bg-primary-700 text-sm"
+          >
+            Renombrar
+            <svg
+              class="size-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+              ><path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"></path></svg
+            >
+          </button>
+        </div>
+      </form>
+      <div class="flex gap-2 items-center">
+        <button
+          data-modal-target="AddSectionModal"
+          data-modal-toggle="AddSectionModal"
+          type="button"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 focus:outline-none"
+          >Agregar Sección</button
+        >
+      </div>
+    </section>
+    <section class="mt-6">
+      <div class="wrapper">
+        {
+          documentSections.map((documentSection) => (
+            <div class="accordion">
+              <h3 class="accordion-title">{documentSection.heading}</h3>
+              <p class="accordion-description">{documentSection.content}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+  <ToastSuccess />
+  <AddSectionModal />
+</Layout>
+<script>
+  import { notifySuccess } from "../../utils/notifications";
+
+  const updateDocumentNameForm = document.getElementById(
+    "updateDocumentNameForm"
+  );
+
+  if (updateDocumentNameForm instanceof HTMLFormElement) {
+    updateDocumentNameForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const documentId = localStorage.getItem("documentId");
+
+      await fetch(`/api/documents/${documentId}`, {
+        method: "PATCH",
+        body: new FormData(updateDocumentNameForm),
+      });
+
+      notifySuccess("Documento actualizado correctamente");
+    });
+  }
+</script>
