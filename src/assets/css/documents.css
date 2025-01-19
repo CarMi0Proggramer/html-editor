@@ -1,62 +1,97 @@
+/* General wrapper styling */
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Accordion styling */
 .accordion {
   display: flex;
   flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.accordion:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Accordion title */
 .accordion .accordion-title {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  font-size: 20px;
-  color: #030712;
-  font-weight: 700;
-  border-bottom: 1px solid #b9bdc5;
-
-  display: inline-flex;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 22px;
+  color: #111827;
+  font-weight: 600;
+  padding: 16px 24px;
+  display: flex;
   justify-content: space-between;
-  gap: 24px;
+  align-items: center;
+  cursor: pointer;
+  background: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.accordion .accordion-title:hover {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+/* Accordion icon */
 .accordion .accordion-title .accordion-icon {
   min-width: 32px;
   width: 32px;
   min-height: 32px;
   height: 32px;
   transform: rotate(90deg);
-  transition: transform 0.7s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .accordion.active .accordion-title .accordion-icon {
   transform: rotate(-90deg);
 }
 
+/* Accordion description */
 .accordion .accordion-description {
   overflow: hidden;
-  padding: 8px;
-  color: #4a4e57;
-  font-size: 14px;
+  padding: 16px 24px;
+  color: #374151;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
   opacity: 0;
   height: 0px;
-  transition: opacity 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: opacity 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    height 0.5s ease-in-out;
 }
 
-.accordion.accordion.active .accordion-description {
+.accordion.active .accordion-description {
   opacity: 1;
-  height: 100%;
+  height: auto;
 }
 
+/* Media queries for larger screens */
 @media screen and (min-width: 640px) {
   .accordion .accordion-title {
-    font-size: 28px;
+    font-size: 24px;
+    padding: 20px 28px;
   }
 
   .accordion .accordion-description {
-    font-size: 16px;
+    font-size: 18px;
+    padding: 20px 28px;
   }
 }
