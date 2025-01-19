@@ -61,7 +61,15 @@ export const POST: APIRoute = async ({ request }) => {
   const filePath = join(tempDir, fileName);
   writeFileSync(filePath, html);
 
-  return new Response(JSON.stringify({ filePath, name: document.name }));
+  const fileContent = readFileSync(filePath);
+
+  return new Response(fileContent, {
+    status: 200,
+    headers: {
+      "Content-Type": "text/html",
+      "Content-Disposition": `attachment; filename="${fileName}.html"`,
+    },
+  });
 };
 
 function generateHtmlSectionsCode(

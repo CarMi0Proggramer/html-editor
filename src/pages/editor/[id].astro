@@ -170,11 +170,10 @@ const documentSections = await getDocumentSectionsByDocumentId(documentId);
         notifyError("Error al exportar el archivo");
       }
 
-      const { filePath, name } = await res.json();
-
+      const blob = await res.blob();
       const downloadLink = document.createElement("a");
-      downloadLink.href = filePath;
-      downloadLink.download = `${name}.html`;
+
+      downloadLink.href = URL.createObjectURL(blob);
       downloadLink.hidden = true;
 
       document.body.appendChild(downloadLink);
