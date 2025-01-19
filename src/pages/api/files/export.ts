@@ -62,7 +62,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   writeFileSync(filePath, html);
 
-  return new Response(JSON.stringify({ filePath, fileName }), {
+  return new Response(JSON.stringify({ filePath, fileName: document.name }), {
     status: 200,
   });
 };
