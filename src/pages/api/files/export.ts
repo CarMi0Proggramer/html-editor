@@ -2,10 +2,10 @@ import type { APIRoute } from "astro";
 import {
   sendBadRequestResponse,
   sendNotFoundException,
-} from "../../utils/exceptions";
-import { getDocumentById } from "../../utils/documents";
-import { getDocumentSectionsByDocumentId } from "../../utils/document-sections";
-import { formatDocumentContent } from "../../utils/format-document";
+} from "../../../utils/exceptions";
+import { getDocumentById } from "../../../utils/documents";
+import { getDocumentSectionsByDocumentId } from "../../../utils/document-sections";
+import { formatDocumentContent } from "../../../utils/format-document";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
@@ -59,16 +59,11 @@ export const POST: APIRoute = async ({ request }) => {
 
   const fileName = `${crypto.randomUUID()}.html`;
   const filePath = join(tempDir, fileName);
+
   writeFileSync(filePath, html);
 
-  const fileContent = readFileSync(filePath);
-
-  return new Response(fileContent, {
+  return new Response(JSON.stringify({ filePath, fileName }), {
     status: 200,
-    headers: {
-      "Content-Type": "text/html",
-      "Content-Disposition": `attachment; filename="${fileName}.html"`,
-    },
   });
 };
 

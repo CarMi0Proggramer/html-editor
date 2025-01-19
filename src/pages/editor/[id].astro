@@ -157,29 +157,40 @@ const documentSections = await getDocumentSectionsByDocumentId(documentId);
   const exportButton = document.getElementById("exportButton");
 
   if (exportButton instanceof HTMLButtonElement) {
-    const formData = new FormData();
-    formData.append("documentId", documentId!);
+    const exportFormData = new FormData();
+    exportFormData.append("documentId", documentId!);
 
     exportButton.addEventListener("click", async () => {
-      const res = await fetch("/api/export-html-file", {
+      const res = await fetch("/api/files/export", {
         method: "POST",
-        body: formData,
+        body: exportFormData,
       });
 
       if (!res.ok) {
         notifyError("Error al exportar el archivo");
       }
 
-      const blob = await res.blob();
-      const downloadLink = document.createElement("a");
+      const { filePath, fileName } = await res.json();
 
-      downloadLink.href = URL.createObjectURL(blob);
-      downloadLink.download = "documento1.html";
-      downloadLink.hidden = true;
+      const downloadFormData = new FormData();
+      downloadFormData.append("filePath", filePath);
+      downloadFormData.append("fileName", fileName);
 
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
+      fetch("/api/files/download", {
+        method: "POST",
+        body: downloadFormData,
+      }).then(async (res) => {
+        const blob = await res.blob();
+        const downloadLink = document.createElement("a");
+
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = `${fileName}.html`;
+        downloadLink.hidden = true;
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      });
     });
   }
 
