@@ -60,7 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
   const filePath = join(process.cwd(), "temp", fileName);
   writeFileSync(filePath, html);
 
-  return new Response(JSON.stringify({ filePath }));
+  return new Response(JSON.stringify({ filePath, name: document.name }));
 };
 
 function generateHtmlSectionsCode(
