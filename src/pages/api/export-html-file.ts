@@ -7,9 +7,10 @@ import { getDocumentById } from "../../utils/documents";
 import { getDocumentSectionsByDocumentId } from "../../utils/document-sections";
 import { formatDocumentContent } from "../../utils/format-document";
 import { readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
-const assetsDir = join(process.cwd(), "src", "assets");
+const assetsDir = resolve("src", "assets");
+const tempDir = resolve("temp");
 
 export const POST: APIRoute = async ({ request }) => {
   const formData = await request.formData();
@@ -57,7 +58,7 @@ export const POST: APIRoute = async ({ request }) => {
   `;
 
   const fileName = `${crypto.randomUUID()}.html`;
-  const filePath = join(process.cwd(), "temp", fileName);
+  const filePath = join(tempDir, fileName);
   writeFileSync(filePath, html);
 
   return new Response(JSON.stringify({ filePath, name: document.name }));
