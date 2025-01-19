@@ -1,4 +1,4 @@
-export function formatDocumentContent(content: FormDataEntryValue) {
+export function formatDocumentContent(content: FormDataEntryValue | string) {
   // Convertir el contenido a una cadena
   let formattedContent = content.toString();
 

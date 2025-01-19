@@ -134,7 +134,7 @@ const documentSections = await getDocumentSectionsByDocumentId(documentId);
   <AddSectionModal />
 </Layout>
 <script>
-  import { notifySuccess } from "../../utils/notifications";
+  import { notifyError, notifySuccess } from "../../utils/notifications";
 
   const updateDocumentNameForm = document.getElementById(
     "updateDocumentNameForm"
@@ -157,7 +157,31 @@ const documentSections = await getDocumentSectionsByDocumentId(documentId);
   const exportButton = document.getElementById("exportButton");
 
   if (exportButton instanceof HTMLButtonElement) {
-    exportButton.addEventListener("click", async () => {});
+    const formData = new FormData();
+    formData.append("documentId", documentId!);
+
+    exportButton.addEventListener("click", async () => {
+      const res = await fetch("/api/export-html-file", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        notifyError("Error al exportar el archivo");
+      }
+
+      const { filePath } = await res.json();
+
+      const downloadLink = document.createElement("a");
+
+      downloadLink.href = filePath;
+      downloadLink.download = "document.html";
+      downloadLink.hidden = true;
+
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    });
   }
 
   const deleteSectionButtons = document.querySelectorAll(
