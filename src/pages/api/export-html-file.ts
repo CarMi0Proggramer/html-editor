@@ -10,7 +10,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const assetsDir = resolve("src", "assets");
-const tempDir = resolve("temp");
+const tempDir = resolve("tmp");
 
 export const POST: APIRoute = async ({ request }) => {
   const formData = await request.formData();
