@@ -56,7 +56,7 @@
             >
             <textarea
               id="content"
-              rows="4"
+              rows="10"
               name="content"
               class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-md border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
               placeholder="Escriba el contenido..."
@@ -85,6 +85,8 @@
   </div>
 </div>
 <script>
+  import { formatDocumentContent } from "../utils/format-document";
+
   const addSectionForm = document.getElementById("addSectionForm");
 
   if (addSectionForm instanceof HTMLFormElement) {
@@ -93,6 +95,12 @@
 
       const formData = new FormData(addSectionForm);
       const documentId = localStorage.getItem("documentId")!;
+
+      const content = formData.get("content")!;
+      formData.delete("content");
+
+      const formattedContent = formatDocumentContent(content);
+      formData.append("content", formattedContent);
 
       formData.append("documentId", documentId);
 

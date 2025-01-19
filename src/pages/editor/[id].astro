@@ -98,7 +98,10 @@ const documentSections = await getDocumentSectionsByDocumentId(documentId);
                   />
                 </svg>
               </h3>
-              <p class="accordion-description">{documentSection.content}</p>
+              <div
+                class="accordion-description"
+                set:html={documentSection.content}
+              />
             </div>
           ))
         }
