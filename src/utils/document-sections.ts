@@ -14,6 +14,16 @@ export async function createDocumentSection(data: {
   return documentSection;
 }
 
+export async function getDocumentSectionById(documentSectionId: string) {
+  const result = await db
+    .select()
+    .from(DocumentSection)
+    .where(eq(DocumentSection.id, documentSectionId));
+  const [documentSection] = result;
+
+  return documentSection;
+}
+
 export async function getDocumentSectionsByDocumentId(documentId: string) {
   const result = await db
     .select()
@@ -27,4 +37,10 @@ export async function deleteDocumentSectionsByDocumentId(documentId: string) {
   await db
     .delete(DocumentSection)
     .where(eq(DocumentSection.documentId, documentId));
+}
+
+export async function deleteDocumentSectionById(documentSectionId: string) {
+  await db
+    .delete(DocumentSection)
+    .where(eq(DocumentSection.id, documentSectionId));
 }

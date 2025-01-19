@@ -85,18 +85,40 @@ const documentSections = await getDocumentSectionsByDocumentId(documentId);
           documentSections.map((documentSection) => (
             <div class="accordion">
               <h3 class="accordion-title">
-                {documentSection.heading}{" "}
-                <svg
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+                {documentSection.heading}
+                <div class="inline-flex items-center gap-3">
+                  <button
+                    data-document-section-id={documentSection.id}
+                    class="deleteSectionBtn text-red-500 hover:text-red-700"
+                  >
+                    <svg
+                      class="size-6"
+                      viewBox="0 0 24 24"
+                      fill="#fff"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M14 10V17M10 10V17"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </button>
+                  <svg
+                    class="accordion-icon"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
               </h3>
               <div
                 class="accordion-description"
@@ -117,12 +139,11 @@ const documentSections = await getDocumentSectionsByDocumentId(documentId);
   const updateDocumentNameForm = document.getElementById(
     "updateDocumentNameForm"
   );
+  const documentId = localStorage.getItem("documentId");
 
   if (updateDocumentNameForm instanceof HTMLFormElement) {
     updateDocumentNameForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      const documentId = localStorage.getItem("documentId");
 
       await fetch(`/api/documents/${documentId}`, {
         method: "PATCH",
@@ -130,6 +151,28 @@ const documentSections = await getDocumentSectionsByDocumentId(documentId);
       });
 
       notifySuccess("Documento actualizado correctamente");
+    });
+  }
+
+  const exportButton = document.getElementById("exportButton");
+
+  if (exportButton instanceof HTMLButtonElement) {
+    exportButton.addEventListener("click", async () => {});
+  }
+
+  const deleteSectionButtons = document.querySelectorAll(
+    ".deleteSectionBtn"
+  ) as NodeListOf<HTMLButtonElement>;
+
+  for (const deleteSectionBtn of deleteSectionButtons) {
+    deleteSectionBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+
+      const documentSectionId = deleteSectionBtn.dataset.documentSectionId;
+
+      fetch(`/api/document-sections/${documentSectionId}`, {
+        method: "DELETE",
+      }).then(() => location.reload());
     });
   }
 </script>
